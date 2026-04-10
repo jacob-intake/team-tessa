@@ -343,7 +343,7 @@ export default function Home() {
 
           <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
             <button className="btn-secondary" onClick={reset}>
-              Create New Image
+              Refresh Page
             </button>
           </div>
 
