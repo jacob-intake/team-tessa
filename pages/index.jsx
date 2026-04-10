@@ -1,12 +1,23 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Head from "next/head";
 
-const PHOTO_RECT = { x: 307, y: 286, w: 891, h: 915 };
+const TEMPLATES = [
+  {
+    id: "closing",
+    label: "Closed",
+    file: "/template.png",
+    thumb: "/template.png",
+    canvasSize: 1500,
+    photoRect: { x: 307, y: 286, w: 891, h: 915 },
+  },
+];
 
 export default function Home() {
+  const [selectedTemplate, setSelectedTemplate] = useState(TEMPLATES[0]);
   const [propertyImg, setPropertyImg] = useState(null);
   const [templateImg, setTemplateImg] = useState(null);
   const [thumbData, setThumbData] = useState(null);
+  const [address, setAddress] = useState("");
   const [status, setStatus] = useState("");
   const [ready, setReady] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState(null);
@@ -16,11 +27,13 @@ export default function Home() {
   const workCanvasRef = useRef(null);
 
   useEffect(() => {
+    setTemplateImg(null);
+    setStatus("");
     const img = new Image();
     img.onload = () => setTemplateImg(img);
-    img.onerror = () => setStatus("Template image failed to load. Check /public/template.png.");
-    img.src = "/template.png";
-  }, []);
+    img.onerror = () => setStatus("Template image failed to load. Check /public/" + selectedTemplate.file);
+    img.src = selectedTemplate.file;
+  }, [selectedTemplate]);
 
   const handleFile = useCallback((file) => {
     if (!file || !file.type.startsWith("image/")) {
@@ -53,13 +66,14 @@ export default function Home() {
     if (!propertyImg || !templateImg) return;
     setStatus("Compositing...");
 
+    const size = selectedTemplate.canvasSize;
+    const pr = selectedTemplate.photoRect;
     const work = workCanvasRef.current;
     const ctx = work.getContext("2d");
-    work.width = 1500;
-    work.height = 1500;
-    ctx.clearRect(0, 0, 1500, 1500);
+    work.width = size;
+    work.height = size;
+    ctx.clearRect(0, 0, size, size);
 
-    const pr = PHOTO_RECT;
     const srcW = propertyImg.width;
     const srcH = propertyImg.height;
     const targetAspect = pr.w / pr.h;
@@ -75,26 +89,40 @@ export default function Home() {
     }
 
     ctx.drawImage(propertyImg, sx, sy, sw, sh, pr.x, pr.y, pr.w, pr.h);
-    ctx.drawImage(templateImg, 0, 0, 1500, 1500);
+    ctx.drawImage(templateImg, 0, 0, size, size);
 
     const out = outputCanvasRef.current;
     const outCtx = out.getContext("2d");
-    out.width = 1500;
-    out.height = 1500;
+    out.width = size;
+    out.height = size;
     outCtx.drawImage(work, 0, 0);
 
     const dataUrl = out.toDataURL("image/jpeg", 0.95);
     setDownloadUrl(dataUrl);
-    setStatus("1500 x 1500 JPG ready.");
-  }, [propertyImg, templateImg]);
+    setStatus(size + " x " + size + " JPG ready.");
+  }, [propertyImg, templateImg, selectedTemplate]);
 
   const download = useCallback(() => {
     if (!downloadUrl) return;
+    const base = "tessa flechsenhaar_team tessa_san diego luxury real estate_best escrow officer in San Diego_new venture escrow";
+    const filename = address.trim()
+      ? base + "_" + address.trim() + ".jpg"
+      : base + ".jpg";
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = "tessa flechsenhaar_team tessa_san diego luxury real estate_best escrow officer in San Diego_new venture escrow.jpg";
+    a.download = filename;
     a.click();
-  }, [downloadUrl]);
+  }, [downloadUrl, address]);
+
+  const reset = useCallback(() => {
+    setPropertyImg(null);
+    setThumbData(null);
+    setReady(false);
+    setDownloadUrl(null);
+    setStatus("");
+    setAddress("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
 
   function formatBytes(bytes) {
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
@@ -123,21 +151,9 @@ export default function Home() {
           padding: 0 0 4rem;
           background: #ffffff;
         }
-        .site-header {
-          width: 100%;
-          margin-bottom: 2.5rem;
-          line-height: 0;
-        }
-        .site-header img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-        .content {
-          width: 100%;
-          max-width: 520px;
-          padding: 0 1.5rem;
-        }
+        .site-header { width: 100%; margin-bottom: 2.5rem; line-height: 0; }
+        .site-header img { width: 100%; height: auto; display: block; }
+        .content { width: 100%; max-width: 560px; padding: 0 1.5rem; }
         .card {
           background: #fff; border-radius: 16px; border: 0.5px solid #e2dbd6;
           padding: 2rem; width: 100%; margin-bottom: 1.5rem;
@@ -146,14 +162,48 @@ export default function Home() {
           font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
           color: #9a8c82; margin-bottom: 0.75rem;
         }
+        .template-row {
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          flex-wrap: nowrap;
+        }
+        .template-option {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          padding: 12px;
+          border-radius: 12px;
+          border: 1.5px solid #e2dbd6;
+          transition: all 0.15s;
+          background: #faf9f8;
+        }
+        .template-option:hover { border-color: #8b6f5e; background: #f5ede8; }
+        .template-option.selected { border-color: #4a3728; background: #f5ede8; }
+        .template-option img {
+          width: 100%;
+          aspect-ratio: 1;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 0.5px solid #e2dbd6;
+        }
+        .template-option-bottom {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+        }
+        .template-option input[type=radio] { accent-color: #4a3728; width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+        .template-option-label { font-size: 13px; color: #4a3728; font-weight: 500; }
         .drop-zone {
           border: 1.5px dashed #c9bfb8; border-radius: 12px; padding: 2.5rem 1.5rem;
           text-align: center; cursor: pointer; transition: all 0.2s;
           background: #f9f9f9; position: relative;
         }
-        .drop-zone:hover, .drop-zone.drag-over {
-          border-color: #8b6f5e; background: #f5ede8;
-        }
+        .drop-zone:hover, .drop-zone.drag-over { border-color: #8b6f5e; background: #f5ede8; }
         .drop-icon {
           width: 44px; height: 44px; margin: 0 auto 1rem; background: #f0e8e3;
           border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -174,6 +224,17 @@ export default function Home() {
           color: #3b6d11; font-size: 11px; font-weight: 500; padding: 3px 10px;
           border-radius: 20px; margin-top: 0.75rem;
         }
+        .address-label {
+          font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+          color: #9a8c82; margin-top: 1rem; margin-bottom: 0.35rem; display: block;
+        }
+        .address-input {
+          width: 100%; padding: 11px 14px; font-family: 'DM Sans', sans-serif;
+          font-size: 13px; color: #4a3728; border: 0.5px solid #e2dbd6;
+          border-radius: 10px; background: #faf9f8; outline: none; transition: border-color 0.15s;
+        }
+        .address-input::placeholder { color: #c9bfb8; }
+        .address-input:focus { border-color: #8b6f5e; background: #fff; }
         .preview-wrap {
           border-radius: 10px; overflow: hidden; border: 0.5px solid #e2dbd6;
           background: #1a1614; min-height: 180px; display: flex;
@@ -206,90 +267,118 @@ export default function Home() {
 
         <div className="content">
 
-        <div className="card">
-          <div className="section-label">Property Photo</div>
-          <div
-            className={`drop-zone${dragOver ? " drag-over" : ""}`}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
-          >
-            <input
-              ref={fileInputRef}
-              className="file-input"
-              type="file"
-              accept="image/*"
-              onChange={(e) => { if (e.target.files[0]) handleFile(e.target.files[0]); }}
-            />
-            <div className="drop-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b6f5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
+          <div className="card">
+            <div className="section-label">Select Template</div>
+            <div className="template-row">
+              {TEMPLATES.map((t) => (
+                <div
+                  key={t.id}
+                  className={`template-option${selectedTemplate.id === t.id ? " selected" : ""}`}
+                  onClick={() => { setSelectedTemplate(t); setDownloadUrl(null); setStatus(""); }}
+                >
+                  <img src={t.thumb} alt={t.label} />
+                  <div className="template-option-bottom">
+                    <input
+                      type="radio"
+                      name="template"
+                      value={t.id}
+                      checked={selectedTemplate.id === t.id}
+                      onChange={() => { setSelectedTemplate(t); setDownloadUrl(null); setStatus(""); }}
+                    />
+                    <span className="template-option-label">{t.label}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="drop-label">Drop property photo here</div>
-            <div className="drop-sub">or click to browse. JPG, PNG, HEIC supported.</div>
           </div>
 
-          {thumbData && (
-            <>
-              <div className="thumb-row">
-                <img className="thumb-img" src={thumbData.src} alt="" />
-                <span className="thumb-name">{thumbData.name}</span>
-                <span className="thumb-size">{formatBytes(thumbData.size)}</span>
+          <div className="card">
+            <div className="section-label">Property Photo</div>
+            <div
+              className={`drop-zone${dragOver ? " drag-over" : ""}`}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+            >
+              <input
+                ref={fileInputRef}
+                className="file-input"
+                type="file"
+                accept="image/*"
+                onChange={(e) => { if (e.target.files[0]) handleFile(e.target.files[0]); }}
+              />
+              <div className="drop-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b6f5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
               </div>
-              <div className="badge">
-                <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#639922"/></svg>
-                Ready to generate
-              </div>
-            </>
-          )}
-        </div>
+              <div className="drop-label">Drop property photo here</div>
+              <div className="drop-sub">or click to browse. JPG, PNG, HEIC supported.</div>
+            </div>
 
-        <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
-          <button className="btn-secondary" onClick={() => {
-            setPropertyImg(null);
-            setThumbData(null);
-            setReady(false);
-            setDownloadUrl(null);
-            setStatus("");
-            if (fileInputRef.current) fileInputRef.current.value = "";
-          }}>
-            Create New Image
-          </button>
-        </div>
-
-        <div className="card">
-          <div className="section-label">Preview</div>
-          <div className="preview-wrap">
-            {downloadUrl ? (
-              <canvas ref={outputCanvasRef} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
-            ) : (
+            {thumbData && (
               <>
-                <canvas ref={outputCanvasRef} style={{ display: "none" }} />
-                <div className="placeholder">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9bfb8" strokeWidth="1" strokeLinecap="round" style={{ display: "block", margin: "0 auto 10px" }}>
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                  <div style={{ fontSize: "13px", color: "#c9bfb8" }}>Preview will appear here</div>
+                <div className="thumb-row">
+                  <img className="thumb-img" src={thumbData.src} alt="" />
+                  <span className="thumb-name">{thumbData.name}</span>
+                  <span className="thumb-size">{formatBytes(thumbData.size)}</span>
+                </div>
+                <div className="badge">
+                  <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#639922"/></svg>
+                  Ready to generate
                 </div>
               </>
             )}
+
+            <span className="address-label">Property Address</span>
+            <input
+              className="address-input"
+              type="text"
+              placeholder="e.g. 1234 Torrey Circle, San Diego 92130"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
           </div>
 
-          <div className="btn-row">
-            <button className="btn-primary" onClick={generate} disabled={!ready || !templateImg}>
-              Generate Image
-            </button>
-            <button className="btn-secondary" onClick={download} disabled={!downloadUrl}>
-              Download JPG
+          <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
+            <button className="btn-secondary" onClick={reset}>
+              Create New Image
             </button>
           </div>
-          <div className="status">{status}</div>
-        </div>
+
+          <div className="card">
+            <div className="section-label">Preview</div>
+            <div className="preview-wrap">
+              {downloadUrl ? (
+                <canvas ref={outputCanvasRef} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+              ) : (
+                <>
+                  <canvas ref={outputCanvasRef} style={{ display: "none" }} />
+                  <div className="placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9bfb8" strokeWidth="1" strokeLinecap="round" style={{ display: "block", margin: "0 auto 10px" }}>
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <div style={{ fontSize: "13px", color: "#c9bfb8" }}>Preview will appear here</div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="btn-row">
+              <button className="btn-primary" onClick={generate} disabled={!ready || !templateImg}>
+                Generate Image
+              </button>
+              <button className="btn-secondary" onClick={download} disabled={!downloadUrl}>
+                Download JPG
+              </button>
+            </div>
+            <div className="status">{status}</div>
+          </div>
+
         </div>
       </div>
 
