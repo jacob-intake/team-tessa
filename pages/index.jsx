@@ -92,7 +92,7 @@ export default function Home() {
     if (!downloadUrl) return;
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = "team-tessa-closing.jpg";
+    a.download = "tessa flechsenhaar_team tessa_san diego luxury real estate_best escrow officer in San Diego_new venture escrow.jpg";
     a.click();
   }, [downloadUrl]);
 
@@ -245,6 +245,19 @@ export default function Home() {
               </div>
             </>
           )}
+        </div>
+
+        <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "0.75rem" }}>
+          <button className="btn-secondary" onClick={() => {
+            setPropertyImg(null);
+            setThumbData(null);
+            setReady(false);
+            setDownloadUrl(null);
+            setStatus("");
+            if (fileInputRef.current) fileInputRef.current.value = "";
+          }}>
+            Create New Image
+          </button>
         </div>
 
         <div className="card">
