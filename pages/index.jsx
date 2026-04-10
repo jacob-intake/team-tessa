@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Head from "next/head";
 
-const PHOTO_RECT = { x: 307, y: 286, w: 891, h: 627 };
+const PHOTO_RECT = { x: 307, y: 286, w: 891, h: 915 };
 
 export default function Home() {
   const [propertyImg, setPropertyImg] = useState(null);
