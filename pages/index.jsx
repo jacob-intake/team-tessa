@@ -4,7 +4,7 @@ import Head from "next/head";
 const TEMPLATES = [
   {
     id: "closing",
-    label: "Closed",
+    label: "Template 1",
     file: "/template.png",
     thumb: "/template.png",
     canvasSize: 1500,
@@ -165,18 +165,17 @@ export default function Home() {
         .template-row {
           display: flex;
           flex-direction: row;
-          gap: 16px;
+          gap: 12px;
           flex-wrap: nowrap;
         }
         .template-option {
-          flex: 1;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
           gap: 10px;
           cursor: pointer;
-          padding: 12px;
-          border-radius: 12px;
+          padding: 10px 14px;
+          border-radius: 10px;
           border: 1.5px solid #e2dbd6;
           transition: all 0.15s;
           background: #faf9f8;
@@ -184,17 +183,17 @@ export default function Home() {
         .template-option:hover { border-color: #8b6f5e; background: #f5ede8; }
         .template-option.selected { border-color: #4a3728; background: #f5ede8; }
         .template-option img {
-          width: 100%;
-          aspect-ratio: 1;
+          width: 56px;
+          height: 56px;
           object-fit: cover;
-          border-radius: 8px;
+          border-radius: 6px;
           border: 0.5px solid #e2dbd6;
+          flex-shrink: 0;
         }
         .template-option-bottom {
           display: flex;
           align-items: center;
           gap: 8px;
-          width: 100%;
         }
         .template-option input[type=radio] { accent-color: #4a3728; width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
         .template-option-label { font-size: 13px; color: #4a3728; font-weight: 500; }
