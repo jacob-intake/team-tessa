@@ -114,27 +114,33 @@ export default function Home() {
 
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #f7f4f0; font-family: 'DM Sans', sans-serif; }
+        body { background: #ffffff; font-family: 'DM Sans', sans-serif; }
         .app {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 2.5rem 1.5rem 4rem;
+          padding: 0 0 4rem;
+          background: #ffffff;
         }
-        .header { text-align: center; margin-bottom: 2.5rem; }
-        .eyebrow {
-          font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-          color: #9a8c82; margin-bottom: 0.5rem;
+        .site-header {
+          width: 100%;
+          margin-bottom: 2.5rem;
+          line-height: 0;
         }
-        .title {
-          font-family: 'Playfair Display', serif; font-size: 28px;
-          font-weight: 400; color: #2a1f1a; letter-spacing: -0.01em;
+        .site-header img {
+          width: 100%;
+          height: auto;
+          display: block;
         }
-        .subtitle { font-size: 13px; color: #9a8c82; margin-top: 0.4rem; }
+        .content {
+          width: 100%;
+          max-width: 520px;
+          padding: 0 1.5rem;
+        }
         .card {
           background: #fff; border-radius: 16px; border: 0.5px solid #e2dbd6;
-          padding: 2rem; width: 100%; max-width: 520px; margin-bottom: 1.5rem;
+          padding: 2rem; width: 100%; margin-bottom: 1.5rem;
         }
         .section-label {
           font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -143,7 +149,7 @@ export default function Home() {
         .drop-zone {
           border: 1.5px dashed #c9bfb8; border-radius: 12px; padding: 2.5rem 1.5rem;
           text-align: center; cursor: pointer; transition: all 0.2s;
-          background: #faf8f6; position: relative;
+          background: #f9f9f9; position: relative;
         }
         .drop-zone:hover, .drop-zone.drag-over {
           border-color: #8b6f5e; background: #f5ede8;
@@ -157,7 +163,7 @@ export default function Home() {
         .file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
         .thumb-row {
           display: flex; align-items: center; gap: 10px; margin-top: 0.75rem;
-          padding: 10px 12px; background: #faf8f6; border-radius: 8px;
+          padding: 10px 12px; background: #f9f9f9; border-radius: 8px;
           border: 0.5px solid #e2dbd6;
         }
         .thumb-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 0.5px solid #e2dbd6; flex-shrink: 0; }
@@ -194,11 +200,11 @@ export default function Home() {
       `}</style>
 
       <div className="app">
-        <div className="header">
-          <div className="eyebrow">New Venture Escrow</div>
-          <div className="title">Team Tessa</div>
-          <div className="subtitle">Closing Photo Generator</div>
+        <div className="site-header">
+          <img src="/team_tessa_header.jpg" alt="Team Tessa" />
         </div>
+
+        <div className="content">
 
         <div className="card">
           <div className="section-label">Property Photo</div>
@@ -270,6 +276,7 @@ export default function Home() {
             </button>
           </div>
           <div className="status">{status}</div>
+        </div>
         </div>
       </div>
 
