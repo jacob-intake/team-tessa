@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Head from "next/head";
 
-const PHOTO_RECT = { x: 168, y: 205, w: 740, h: 600 };
+const PHOTO_RECT = { x: 307, y: 286, w: 891, h: 627 };
 
 export default function Home() {
   const [propertyImg, setPropertyImg] = useState(null);
@@ -55,9 +55,9 @@ export default function Home() {
 
     const work = workCanvasRef.current;
     const ctx = work.getContext("2d");
-    work.width = 1080;
-    work.height = 1080;
-    ctx.clearRect(0, 0, 1080, 1080);
+    work.width = 1500;
+    work.height = 1500;
+    ctx.clearRect(0, 0, 1500, 1500);
 
     const pr = PHOTO_RECT;
     const srcW = propertyImg.width;
@@ -75,17 +75,17 @@ export default function Home() {
     }
 
     ctx.drawImage(propertyImg, sx, sy, sw, sh, pr.x, pr.y, pr.w, pr.h);
-    ctx.drawImage(templateImg, 0, 0, 1080, 1080);
+    ctx.drawImage(templateImg, 0, 0, 1500, 1500);
 
     const out = outputCanvasRef.current;
     const outCtx = out.getContext("2d");
-    out.width = 1080;
-    out.height = 1080;
+    out.width = 1500;
+    out.height = 1500;
     outCtx.drawImage(work, 0, 0);
 
     const dataUrl = out.toDataURL("image/jpeg", 0.95);
     setDownloadUrl(dataUrl);
-    setStatus("1080 x 1080 JPG ready.");
+    setStatus("1500 x 1500 JPG ready.");
   }, [propertyImg, templateImg]);
 
   const download = useCallback(() => {
@@ -280,7 +280,7 @@ export default function Home() {
         </div>
       </div>
 
-      <canvas ref={workCanvasRef} width="1080" height="1080" style={{ display: "none" }} />
+      <canvas ref={workCanvasRef} width="1500" height="1500" style={{ display: "none" }} />
     </>
   );
 }
