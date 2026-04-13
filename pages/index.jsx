@@ -8,7 +8,7 @@ const TEMPLATES = [
     file: "/template.png",
     thumb: "/template.png",
     canvasSize: 1500,
-    photoRect: { x: 307, y: 286, w: 891, h: 915 },
+    photoRect: { x: 307, y: 286, w: 891, h: 624 },
   },
 ];
 
