@@ -4,11 +4,35 @@ import Head from "next/head";
 const TEMPLATES = [
   {
     id: "closing",
-    label: "Template 1",
+    label: "Closed-Escrow-1",
     file: "/template-1.png",
     thumb: "/template-1.png",
     canvasSize: 1500,
     photoRect: { x: 307, y: 286, w: 891, h: 915 },
+  },
+  {
+    id: "in-escrow-1",
+    label: "In-Escrow-1",
+    file: "/template-2.png",
+    thumb: "/template-2.png",
+    canvasSize: 1500,
+    photoRect: { x: 0, y: 321, w: 1131, h: 976 },
+  },
+  {
+    id: "in-escrow-2",
+    label: "In-Escrow-2",
+    file: "/template-3.png",
+    thumb: "/template-3.png",
+    canvasSize: 1500,
+    photoRect: { x: 254, y: 321, w: 1245, h: 857 },
+  },
+  {
+    id: "in-escrow-3",
+    label: "In-Escrow-3",
+    file: "/template-4.png",
+    thumb: "/template-4.png",
+    canvasSize: 1500,
+    photoRect: { x: 0, y: 321, w: 1054, h: 857 },
   },
 ];
 
