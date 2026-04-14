@@ -5,8 +5,8 @@ const TEMPLATES = [
   {
     id: "closing",
     label: "Template 1",
-    file: "/main 1_Tessa Flechsenhaar_San Diego Best Escrow Officer_New Venture Escrow.png",
-    thumb: "/main 1_Tessa Flechsenhaar_San Diego Best Escrow Officer_New Venture Escrow.png",
+    file: "/template-1.png",
+    thumb: "/template-1.png",
     canvasSize: 1500,
     photoRect: { x: 307, y: 286, w: 891, h: 915 },
   },
