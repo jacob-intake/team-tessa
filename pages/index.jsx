@@ -8,7 +8,7 @@ const TEMPLATES = [
     file: "/template.png",
     thumb: "/template.png",
     canvasSize: 1500,
-    photoRect: { x: 307, y: 286, w: 891, h: 624 },
+    photoRect: { x: 307, y: 286, w: 891, h: 915 },
   },
 ];
 
@@ -74,6 +74,12 @@ export default function Home() {
     work.height = size;
     ctx.clearRect(0, 0, size, size);
 
+    // Draw template first
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(templateImg, 0, 0, size, size);
+
+    // Draw property photo behind template using destination-over
+    // Scale and crop to fill the photo window
     const srcW = propertyImg.width;
     const srcH = propertyImg.height;
     const targetAspect = pr.w / pr.h;
@@ -88,8 +94,11 @@ export default function Home() {
       sx = 0; sy = (srcH - sh) / 2;
     }
 
+    ctx.globalCompositeOperation = "destination-over";
     ctx.drawImage(propertyImg, sx, sy, sw, sh, pr.x, pr.y, pr.w, pr.h);
-    ctx.drawImage(templateImg, 0, 0, size, size);
+
+    // Reset composite operation
+    ctx.globalCompositeOperation = "source-over";
 
     const out = outputCanvasRef.current;
     const outCtx = out.getContext("2d");
