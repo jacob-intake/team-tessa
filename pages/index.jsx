@@ -34,6 +34,14 @@ const TEMPLATES = [
     canvasSize: 1500,
     photoRect: { x: 0, y: 321, w: 1054, h: 857 },
   },
+  {
+    id: "closed-escrow-2",
+    label: "Closed-Escrow-2",
+    file: "/template-5.png",
+    thumb: "/template-5.png",
+    canvasSize: 1500,
+    photoRect: { x: 154, y: 321, w: 1191, h: 600 },
+  },
 ];
 
 export default function Home() {
